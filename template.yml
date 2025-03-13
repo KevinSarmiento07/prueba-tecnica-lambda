@@ -1,6 +1,20 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: AWS Serverless Spring Boot 2 API - com.kass::prueba-tecnica-kass
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Application Configuration"
+        Parameters:
+          - StackName
+
+Parameters:
+  StackName:
+    Type: String
+    Default: PruebaTecnicaKassStack
+
 Globals:
   Api:
     EndpointConfiguration: REGIONAL

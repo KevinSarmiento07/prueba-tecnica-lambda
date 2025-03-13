@@ -29,23 +29,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build -x test  # Ignora tests si aún fallan
 
-
-
-  deploy:
-    name: Deploy to AWS Lambda
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
       - name: Install Serverless Framework
         run: npm install -g serverless
 
@@ -57,6 +40,6 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy to AWS Lambda
-        run: serverless deploy
+        run: serverless deploy --stage prod --stack PruebaTecnicaKassStack
         env:
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}

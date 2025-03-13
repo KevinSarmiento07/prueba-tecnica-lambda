@@ -1,0 +1,64 @@
+apply plugin: 'java'
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven { url "https://repo.spring.io/milestone" }
+  maven { url "https://repo.spring.io/snapshot" }
+}
+
+dependencies {
+  implementation (
+          'org.springframework.boot:spring-boot-starter-web:3.2.6',
+          'com.amazonaws.serverless:aws-serverless-java-container-springboot3:[2.0-SNAPSHOT,)'
+  )
+
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.2.6")
+
+  implementation('mysql:mysql-connector-java:8.0.33')
+  runtimeOnly("com.mysql:mysql-connector-j:8.0.33")
+  implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+  implementation("org.springframework.boot:spring-boot-starter-security:3.2.6")
+  testImplementation 'org.springframework.security:spring-security-test:6.2.2'
+
+  implementation("io.jsonwebtoken:jjwt-api:0.12.3")
+  implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
+  implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
+
+  compileOnly("org.projectlombok:lombok:1.18.30")
+  annotationProcessor("org.projectlombok:lombok:1.18.30")
+
+  implementation 'org.hibernate:hibernate-core:6.4.4.Final'
+  implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
+  implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
+  implementation 'net.bytebuddy:byte-buddy:1.14.7'
+  implementation 'net.bytebuddy:byte-buddy-agent:1.14.7'
+  implementation 'org.hibernate.common:hibernate-commons-annotations:6.0.6.Final'
+  implementation 'software.amazon.awssdk:ssm:2.20.52'
+  testCompileOnly("org.projectlombok:lombok:1.18.30")
+  testAnnotationProcessor("org.projectlombok:lombok:1.18.30")
+  testImplementation("com.amazonaws.serverless:aws-serverless-java-container-core:[2.0-SNAPSHOT,):tests")
+  testImplementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
+  testImplementation(platform("org.junit:junit-bom:5.10.2"))
+  testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+task buildZip(type: Zip) {
+  from compileJava
+  from processResources
+  into('lib') {
+    from(configurations.compileClasspath) {
+      exclude 'tomcat-embed-*'
+    }
+  }
+}
+
+test {
+  useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.compilerArgs.add("-parameters")
+}
+
+build.dependsOn buildZip
